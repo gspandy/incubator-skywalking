@@ -62,7 +62,7 @@
         <h2.version>1.4.196</h2.version>
         <jedis.version>2.9.0</jedis.version>
         <zookeeper.version>3.4.10</zookeeper.version>
-        <elasticsearch.client.version>5.5.0</elasticsearch.client.version>
+        <elasticsearch.client.version>5.3.3</elasticsearch.client.version>
         <zipkin.version>2.9.1</zipkin.version>
         <shardingjdbc.version>2.0.3</shardingjdbc.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>

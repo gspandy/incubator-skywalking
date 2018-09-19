@@ -21,6 +21,7 @@ package org.apache.skywalking.apm.collector.client.elasticsearch;
 import java.net.*;
 import java.util.*;
 import java.util.function.Consumer;
+
 import org.apache.skywalking.apm.collector.client.*;
 import org.apache.skywalking.apm.collector.core.data.CommonTable;
 import org.apache.skywalking.apm.collector.core.util.*;
@@ -41,6 +42,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.reindex.*;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.slf4j.*;
 
 /**
@@ -58,37 +60,60 @@ public class ElasticSearchClient implements Client {
 
     private final String clusterNodes;
 
+    private final String securityUser;
+
     private final NameSpace namespace;
 
     public ElasticSearchClient(String clusterName, boolean clusterTransportSniffer,
-        String clusterNodes) {
+            String clusterNodes, String securityUser) {
         this.clusterName = clusterName;
         this.clusterTransportSniffer = clusterTransportSniffer;
         this.clusterNodes = clusterNodes;
+        this.securityUser = securityUser;
         this.namespace = new NameSpace();
     }
 
     public ElasticSearchClient(String clusterName, boolean clusterTransportSniffer,
-        String clusterNodes, NameSpace namespace) {
+            String clusterNodes, NameSpace namespace, String securityUser) {
         this.clusterName = clusterName;
         this.clusterTransportSniffer = clusterTransportSniffer;
         this.clusterNodes = clusterNodes;
+        this.securityUser = securityUser;
         this.namespace = namespace;
     }
 
+
+    private PreBuiltXPackTransportClient initXPackClient() {
+        Settings settings = Settings.builder()
+                .put("cluster.name", clusterName)
+                .put("xpack.security.transport.ssl.enabled", false)
+                .put("xpack.security.user", securityUser)
+                .put("client.transport.sniff", false).build();
+        return new PreBuiltXPackTransportClient(settings);
+
+    }
+
+    private PreBuiltTransportClient initClient() {
+        Settings settings = Settings.builder()
+                .put("cluster.name", clusterName)
+                .put("client.transport.sniff", clusterTransportSniffer)
+                .build();
+        return new PreBuiltTransportClient(settings);
+    }
+
+
     @Override
     public void initialize() throws ClientException {
-        Settings settings = Settings.builder()
-            .put("cluster.name", clusterName)
-            .put("client.transport.sniff", clusterTransportSniffer)
-            .build();
-
-        client = new PreBuiltTransportClient(settings);
+        if (securityUser == null || "".equals(securityUser)) {
+            client = initClient();
+        } else {
+            client = initXPackClient();
+        }
 
         List<AddressPairs> pairsList = parseClusterNodes(clusterNodes);
         for (AddressPairs pairs : pairsList) {
             try {
-                ((PreBuiltTransportClient)client).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(pairs.host), pairs.port));
+                ((PreBuiltTransportClient) client).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(pairs.host), pairs.port));
             } catch (UnknownHostException e) {
                 throw new ElasticSearchClientException(e.getMessage(), e);
             }

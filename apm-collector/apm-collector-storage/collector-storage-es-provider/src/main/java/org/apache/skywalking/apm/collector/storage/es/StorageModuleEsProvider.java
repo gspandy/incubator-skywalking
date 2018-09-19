@@ -19,6 +19,7 @@
 package org.apache.skywalking.apm.collector.storage.es;
 
 import java.util.UUID;
+
 import org.apache.skywalking.apm.collector.client.*;
 import org.apache.skywalking.apm.collector.client.elasticsearch.ElasticSearchClient;
 import org.apache.skywalking.apm.collector.cluster.ClusterModule;
@@ -89,20 +90,25 @@ public class StorageModuleEsProvider extends ModuleProvider {
         this.nameSpace = new NameSpace();
     }
 
-    @Override public String name() {
+    @Override
+    public String name() {
         return NAME;
     }
 
-    @Override public Class<? extends ModuleDefine> module() {
+    @Override
+    public Class<? extends ModuleDefine> module() {
         return StorageModule.class;
     }
 
-    @Override public ModuleConfig createConfigBeanIfAbsent() {
+    @Override
+    public ModuleConfig createConfigBeanIfAbsent() {
         return config;
     }
 
-    @Override public void prepare() throws ServiceNotProvidedException {
-        elasticSearchClient = new ElasticSearchClient(config.getClusterName(), config.getClusterTransportSniffer(), config.getClusterNodes(), nameSpace);
+    @Override
+    public void prepare() throws ServiceNotProvidedException {
+        elasticSearchClient = new ElasticSearchClient(config.getClusterName(), config.getClusterTransportSniffer(),
+                config.getClusterNodes(), nameSpace, config.getSecurityUser());
 
         this.registerServiceImplementation(ITTLConfigService.class, new TTLConfigService(config));
         this.registerServiceImplementation(IBatchDAO.class, new BatchProcessEsDAO(elasticSearchClient, config.getBulkActions(), config.getBulkSize(), config.getFlushInterval(), config.getConcurrentRequests()));
@@ -146,7 +152,7 @@ public class StorageModuleEsProvider extends ModuleProvider {
 
     @Override
     public String[] requiredModules() {
-        return new String[] {ClusterModule.NAME, ConfigurationModule.NAME, RemoteModule.NAME};
+        return new String[]{ClusterModule.NAME, ConfigurationModule.NAME, RemoteModule.NAME};
     }
 
     private void registerCacheDAO() throws ServiceNotProvidedException {

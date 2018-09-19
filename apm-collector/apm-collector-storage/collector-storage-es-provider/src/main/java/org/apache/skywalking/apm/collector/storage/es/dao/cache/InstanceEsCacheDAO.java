@@ -63,7 +63,7 @@ public class InstanceEsCacheDAO extends EsDAO implements IInstanceCacheDAO {
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return (int)searchHit.getSource().get(InstanceTable.INSTANCE_ID.getName());
         }
@@ -84,7 +84,7 @@ public class InstanceEsCacheDAO extends EsDAO implements IInstanceCacheDAO {
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return (int)searchHit.getSource().get(InstanceTable.INSTANCE_ID.getName());
         }

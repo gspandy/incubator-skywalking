@@ -69,7 +69,7 @@ public class ServiceNameEsCacheDAO extends EsDAO implements IServiceNameCacheDAO
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.get();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return (int)searchHit.getSource().get(ServiceNameTable.SERVICE_ID.getName());
         }

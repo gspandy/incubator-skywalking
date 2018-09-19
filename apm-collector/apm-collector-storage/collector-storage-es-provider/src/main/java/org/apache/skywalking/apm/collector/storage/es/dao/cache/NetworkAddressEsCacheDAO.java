@@ -51,7 +51,7 @@ public class NetworkAddressEsCacheDAO extends EsDAO implements INetworkAddressCa
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return ((Number)searchHit.getSource().get(NetworkAddressTable.ADDRESS_ID.getName())).intValue();
         }

@@ -95,7 +95,7 @@ public class SegmentDurationEsUIDAO extends EsDAO implements ISegmentDurationUID
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 
         TraceBrief traceBrief = new TraceBrief();
-        traceBrief.setTotal((int)searchResponse.getHits().totalHits);
+        traceBrief.setTotal((int)searchResponse.getHits().totalHits());
 
         for (SearchHit searchHit : searchResponse.getHits().getHits()) {
             BasicTrace basicTrace = new BasicTrace();

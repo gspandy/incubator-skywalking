@@ -28,6 +28,7 @@ public abstract class ElasticSearchClientConfig extends ModuleConfig {
     private String clusterName;
     private boolean clusterTransportSniffer;
     private String clusterNodes;
+    private String securityUser;
     private String namespace;
 
     public String getClusterName() {
@@ -60,5 +61,13 @@ public abstract class ElasticSearchClientConfig extends ModuleConfig {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public String getSecurityUser() {
+        return securityUser;
+    }
+
+    public void setSecurityUser(final String securityUser) {
+        this.securityUser = securityUser;
     }
 }

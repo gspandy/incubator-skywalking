@@ -61,7 +61,7 @@ public class ApplicationEsCacheDAO extends EsDAO implements IApplicationCacheDAO
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return (int)searchHit.getSource().get(ApplicationTable.APPLICATION_ID.getName());
         }
@@ -99,7 +99,7 @@ public class ApplicationEsCacheDAO extends EsDAO implements IApplicationCacheDAO
         searchRequestBuilder.setSize(1);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        if (searchResponse.getHits().totalHits > 0) {
+        if (searchResponse.getHits().totalHits() > 0) {
             SearchHit searchHit = searchResponse.getHits().iterator().next();
             return (int)searchHit.getSource().get(ApplicationTable.APPLICATION_ID.getName());
         }
